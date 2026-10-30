@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var CACHE_NAME = 'calc-scientifique-v2';
+var CACHE_NAME = 'calc-scientifique-v3';
 var ASSETS = [
   './',
   './index.html',

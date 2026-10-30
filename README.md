@@ -107,9 +107,10 @@ pastille `DEG`).
 
 ## Thèmes et responsive
 
-- Deux thèmes **clair** et **sombre**, choisis par défaut selon le système, mémorisés
-  ensuite (`calc.theme`).
-- Bascule par l'icône lune/soleil en haut à droite.
+- Trois thèmes : **sombre**, **clair** et **ambre** (sombre chaud, doux pour les yeux).
+  Clair ou sombre par défaut selon le système, puis choix mémorisé (`calc.theme`).
+- Bascule par l'icône en haut à droite (lune → soleil → couchant), dans l'ordre
+  sombre → clair → ambre.
 - Mise en page adaptée du mobile (pavé 6 colonnes, historique en tiroir) au grand écran
   (historique en colonne latérale).
 - Respect de `prefers-reduced-motion`.
@@ -175,7 +176,7 @@ statistiques, et machine à états du mode immédiat.
 ```text
 .
 ├── index.html              structure de l'interface et aide
-├── styles.css              thèmes clair/sombre et responsive
+├── styles.css              thèmes sombre/clair/ambre, responsive
 ├── app.js                  état, pavé, historique, modules, clavier
 ├── engine.js               moteur pur : tokenizer, parseur, évaluation
 ├── manifest.webmanifest    manifeste PWA

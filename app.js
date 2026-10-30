@@ -65,11 +65,13 @@
    * État persistant
    * ============================================================ */
 
+  var THEMES = ['dark', 'light', 'amber'];
+  var THEME_COLORS = { dark: '#0b1020', light: '#eef2fb', amber: '#140d07' };
   var storedTheme = load(STORE.theme, null);
   var systemLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
 
   var state = {
-    theme: storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : (systemLight ? 'light' : 'dark'),
+    theme: THEMES.indexOf(storedTheme) !== -1 ? storedTheme : (systemLight ? 'light' : 'dark'),
     mode: load(STORE.mode, 'expression') === 'immediate' ? 'immediate' : 'expression',
     angle: ANGLES.indexOf(load(STORE.angle, 'deg')) !== -1 ? load(STORE.angle, 'deg') : 'deg',
     second: false,
@@ -906,15 +908,15 @@
   }
 
   function applyTheme(theme, persist) {
-    state.theme = theme === 'light' ? 'light' : 'dark';
+    state.theme = THEMES.indexOf(theme) !== -1 ? theme : 'dark';
     ui.root.dataset.theme = state.theme;
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', state.theme === 'light' ? '#eef2fb' : '#0b1020');
+    if (meta) meta.setAttribute('content', THEME_COLORS[state.theme]);
     if (persist) save(STORE.theme, state.theme);
   }
 
   function toggleTheme() {
-    applyTheme(state.theme === 'dark' ? 'light' : 'dark', true);
+    applyTheme(THEMES[(THEMES.indexOf(state.theme) + 1) % THEMES.length], true);
   }
 
   /* ============================================================
