@@ -1,0 +1,28 @@
+{
+  "name": "Calculatrice Scientifique",
+  "short_name": "Calc. Sci.",
+  "description": "Calculatrice scientifique avancée : expression ou mode immédiat, complexes, matrices, statistiques, historique et thèmes clair/sombre.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070b16",
+  "theme_color": "#0b1020",
+  "categories": ["utilities", "education", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

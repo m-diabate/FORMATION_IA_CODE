@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tests du moteur — Calculatrice Scientifique</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0; padding: 32px 20px 64px;
+      background: #0b1020; color: #e7ecff;
+      font: 15px/1.5 "Segoe UI", system-ui, sans-serif;
+    }
+    main { max-width: 820px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    p.sub { color: #93a0c4; margin: 0 0 24px; }
+    .summary {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .badge {
+      padding: 10px 16px; border-radius: 14px; background: #151d36;
+      border: 1px solid #26315a; font-variant-numeric: tabular-nums;
+    }
+    .badge b { font-size: 20px; display: block; }
+    .badge.pass b { color: #34d399; }
+    .badge.fail b { color: #fb7185; }
+    .badge.total b { color: #67e8f9; }
+    ol { list-style: none; padding: 0; margin: 0; }
+    li {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 8px 12px; border-radius: 10px; margin-bottom: 4px;
+      background: #121a30; border: 1px solid transparent;
+      font-variant-numeric: tabular-nums;
+    }
+    li.ok { border-color: #14532d55; }
+    li.ko { border-color: #7f1d1d; background: #2a1220; }
+    li .mark { width: 18px; flex: none; font-weight: 700; }
+    li.ok .mark { color: #34d399; }
+    li.ko .mark { color: #fb7185; }
+    li .msg { color: #fda4af; font-size: 13px; display: block; margin-top: 2px; }
+    .allgood { margin-top: 18px; color: #34d399; font-weight: 600; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Tests du moteur</h1>
+  <p class="sub">Suite exécutée dans le navigateur — même contenu que <code>node --test tests/</code>.</p>
+  <div class="summary" id="summary"></div>
+  <ol id="list"></ol>
+  <p class="allgood" id="allgood" hidden>Tous les tests passent.</p>
+</main>
+
+<script src="../engine.js"></script>
+<script src="cases.js"></script>
+<script>
+  (function () {
+    'use strict';
+    var summary = document.getElementById('summary');
+    var list = document.getElementById('list');
+    var allgood = document.getElementById('allgood');
+    var cases = CalcTestCases.cases(CalcEngine);
+    var results = [];
+    var passed = 0;
+
+    cases.forEach(function (item) {
+      var entry = { name: item.name, ok: true, error: '' };
+      try {
+        item.fn();
+        passed++;
+      } catch (err) {
+        entry.ok = false;
+        entry.error = err && err.message ? err.message : String(err);
+      }
+      results.push(entry);
+
+      var li = document.createElement('li');
+      li.className = entry.ok ? 'ok' : 'ko';
+      var mark = document.createElement('span');
+      mark.className = 'mark';
+      mark.textContent = entry.ok ? '✓' : '✕';
+      var body = document.createElement('span');
+      body.textContent = entry.name;
+      if (!entry.ok) {
+        var msg = document.createElement('span');
+        msg.className = 'msg';
+        msg.textContent = entry.error;
+        body.appendChild(msg);
+      }
+      li.appendChild(mark);
+      li.appendChild(body);
+      list.appendChild(li);
+    });
+
+    function badge(label, value, cls) {
+      var div = document.createElement('div');
+      div.className = 'badge ' + cls;
+      var b = document.createElement('b');
+      b.textContent = value;
+      div.appendChild(b);
+      div.appendChild(document.createTextNode(label));
+      return div;
+    }
+
+    var failed = results.length - passed;
+    summary.appendChild(badge('tests exécutés', results.length, 'total'));
+    summary.appendChild(badge('réussis', passed, 'pass'));
+    summary.appendChild(badge('échoués', failed, failed ? 'fail' : 'pass'));
+    if (!failed) allgood.hidden = false;
+
+    window.__testResults = {
+      total: results.length,
+      passed: passed,
+      failed: failed,
+      results: results
+    };
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Calculatrice scientifique avancée : expression ou mode immédiat, complexes, matrices, statistiques, historique et thèmes clair/sombre.">
+  <meta name="theme-color" content="#0b1020">
+  <title>Calculatrice Scientifique</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="3" width="24" height="26" rx="7" stroke="currentColor" stroke-width="2"/>
+            <rect x="8" y="7" width="16" height="6" rx="2" fill="currentColor" opacity=".85"/>
+            <circle cx="10.5" cy="18" r="1.6" fill="currentColor"/>
+            <circle cx="16" cy="18" r="1.6" fill="currentColor"/>
+            <circle cx="21.5" cy="18" r="1.6" fill="currentColor"/>
+            <circle cx="10.5" cy="23.5" r="1.6" fill="currentColor"/>
+            <circle cx="16" cy="23.5" r="1.6" fill="currentColor"/>
+            <circle cx="21.5" cy="23.5" r="1.6" fill="currentColor"/>
+          </svg>
+        </span>
+        <div class="brand-text">
+          <h1>Calculatrice Scientifique</h1>
+          <p>Moteur maison · mode expression &amp; immédiat</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn history-toggle" id="historyToggle" type="button" aria-label="Ouvrir l’historique" title="Historique">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 7.5V12l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Changer de thème" title="Thème clair / sombre">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="icon-btn" id="helpToggle" type="button" aria-label="Aide et raccourcis" title="Aide">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M9.7 9.3a2.4 2.4 0 1 1 3.4 2.2c-.7.4-1.1.9-1.1 1.7v.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="12" cy="17" r="1.1" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="calculator panel" aria-label="Calculatrice">
+        <nav class="tabs" role="tablist" aria-label="Modules de calcul">
+          <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="calc">Calcul</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="complex">Complexes</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="matrix">Matrices</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="stats">Stats</button>
+        </nav>
+
+        <!-- ============ Calcul ============ -->
+        <div class="tab-panel" id="panel-calc" role="tabpanel" aria-label="Calcul">
+          <div class="display" id="display">
+            <div class="display-head">
+              <div class="chips">
+                <span class="chip" id="angleChip">DEG</span>
+                <span class="chip chip-accent" id="secondChip" hidden>2nd</span>
+                <span class="chip" id="memChip" hidden>M</span>
+              </div>
+              <div class="mode-switch" role="group" aria-label="Mode de calcul">
+                <button type="button" data-mode="expression" class="is-active">Expression</button>
+                <button type="button" data-mode="immediate">Immédiat</button>
+              </div>
+            </div>
+            <div class="display-expr" id="exprLine">0</div>
+            <div class="display-result" id="resultLine" aria-live="polite">0</div>
+            <div class="display-error" id="errorLine" role="alert" hidden></div>
+            <div class="display-foot">
+              <span class="display-hint" id="displayHint">Tapez une expression, Entrée pour calculer</span>
+              <button class="ghost-btn small" id="copyBtn" type="button">Copier</button>
+            </div>
+          </div>
+          <div class="keypad" id="keypad" role="group" aria-label="Pavé de la calculatrice"></div>
+        </div>
+
+        <!-- ============ Complexes ============ -->
+        <div class="tab-panel" id="panel-complex" role="tabpanel" aria-label="Complexes" hidden>
+          <div class="module">
+            <div class="module-head">
+              <h2>Calcul complexe</h2>
+              <p>Saisissez une expression avec <code>i</code>, par exemple <code>(3+4i)*(1-2i)</code>.</p>
+            </div>
+            <input id="complexInput" class="text-input" type="text" value="3+4i" spellcheck="false" autocomplete="off" aria-label="Expression complexe">
+            <div class="quick-keys" id="complexKeys">
+              <button type="button" data-insert="i">i</button>
+              <button type="button" data-insert="+">+</button>
+              <button type="button" data-insert="−">−</button>
+              <button type="button" data-insert="×">×</button>
+              <button type="button" data-insert="÷">÷</button>
+              <button type="button" data-insert="^">^</button>
+              <button type="button" data-insert="(">(</button>
+              <button type="button" data-insert=")">)</button>
+              <button type="button" data-insert="conj(">conj</button>
+              <button type="button" data-insert="arg(">arg</button>
+              <button type="button" data-insert="abs(">|z|</button>
+            </div>
+            <div class="module-actions">
+              <button class="primary-btn" id="complexEval" type="button">Calculer</button>
+              <button class="ghost-btn" id="complexClear" type="button">Effacer</button>
+            </div>
+            <div class="readout">
+              <div class="readout-grid">
+                <div>
+                  <div class="readout-label">Forme algébrique</div>
+                  <div class="readout-value" id="complexRect">—</div>
+                </div>
+                <div>
+                  <div class="readout-label">Forme polaire</div>
+                  <div class="readout-value" id="complexPolar">—</div>
+                </div>
+              </div>
+              <div class="readout-label">Module · argument</div>
+              <div class="readout-sub" id="complexDetail">—</div>
+              <p class="module-error" id="complexError" role="alert" hidden></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Matrices ============ -->
+        <div class="tab-panel" id="panel-matrix" role="tabpanel" aria-label="Matrices" hidden>
+          <div class="module">
+            <div class="module-head">
+              <h2>Matrices</h2>
+              <p>Remplissez A et B (valeurs ou petites expressions), puis choisissez une opération.</p>
+            </div>
+            <div class="matrix-toolbar">
+              <label for="matrixSize">Taille</label>
+              <select id="matrixSize">
+                <option value="2">2 × 2</option>
+                <option value="3">3 × 3</option>
+              </select>
+              <button class="ghost-btn small" id="matrixReset" type="button">Réinitialiser</button>
+            </div>
+            <div class="matrix-grid">
+              <div class="matrix-block">
+                <h3>Matrice A</h3>
+                <div class="matrix-inputs" id="matrixA"></div>
+              </div>
+              <div class="matrix-block">
+                <h3>Matrice B</h3>
+                <div class="matrix-inputs" id="matrixB"></div>
+              </div>
+            </div>
+            <div class="matrix-ops">
+              <button type="button" data-op="add">A + B</button>
+              <button type="button" data-op="sub">A − B</button>
+              <button type="button" data-op="mul">A × B</button>
+              <button type="button" data-op="detA">det(A)</button>
+              <button type="button" data-op="invA">A⁻¹</button>
+              <button type="button" data-op="transA">Aᵀ</button>
+              <button type="button" data-op="transB">Bᵀ</button>
+            </div>
+            <div class="readout">
+              <div class="readout-label" id="matrixResultLabel">Résultat</div>
+              <div class="matrix-result" id="matrixResult">—</div>
+              <p class="module-error" id="matrixError" role="alert" hidden></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ Statistiques ============ -->
+        <div class="tab-panel" id="panel-stats" role="tabpanel" aria-label="Statistiques" hidden>
+          <div class="module">
+            <div class="module-head">
+              <h2>Statistiques</h2>
+              <p>Une valeur par ligne. Pour une régression, écrivez des couples <code>x ; y</code> (point-virgule).</p>
+            </div>
+            <textarea id="statsInput" class="text-input stats-input" rows="6" spellcheck="false" aria-label="Série statistique">2
+4
+4
+4
+5
+5
+7
+9</textarea>
+            <div class="module-actions">
+              <button class="primary-btn" id="statsCompute" type="button">Calculer</button>
+              <button class="ghost-btn" id="statsExample" type="button">Exemple avec couples</button>
+            </div>
+            <div class="stat-grid" id="statsSummary"></div>
+            <div class="readout" id="statsRegressionBox" hidden>
+              <div class="readout-label">Régression linéaire</div>
+              <div class="stat-grid" id="statsRegression"></div>
+              <p class="readout-sub" id="statsEquation">—</p>
+            </div>
+            <p class="module-error" id="statsError" role="alert" hidden></p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="history panel" id="historyPanel" aria-label="Historique des calculs">
+        <div class="history-head">
+          <h2>Historique</h2>
+          <div class="history-actions">
+            <button class="ghost-btn small" id="exportBtn" type="button">Exporter</button>
+            <button class="ghost-btn small danger" id="clearHistoryBtn" type="button">Vider</button>
+            <button class="icon-btn history-close" id="closeHistory" type="button" aria-label="Fermer l’historique">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <ol class="history-list" id="historyList"></ol>
+        <p class="history-empty" id="historyEmpty">Aucun calcul pour l’instant. Le résultat apparaîtra ici.</p>
+        <div class="history-foot">
+          <span id="historyCount">0 calcul</span>
+          <span class="dot" aria-hidden="true">·</span>
+          <span>cliquez pour réutiliser</span>
+        </div>
+      </aside>
+      <div class="backdrop" id="backdrop" hidden></div>
+    </main>
+
+    <footer class="footer">
+      <span>Fonctionne hors ligne · aucune donnée envoyée</span>
+      <span class="dot" aria-hidden="true">·</span>
+      <span>Conventions et raccourcis dans l’aide</span>
+    </footer>
+  </div>
+
+  <dialog id="helpDialog" class="help-dialog" aria-labelledby="helpTitle">
+    <div class="help-head">
+      <div>
+        <p class="eyebrow">Mode d’emploi</p>
+        <h2 id="helpTitle">Aide et raccourcis</h2>
+      </div>
+      <form method="dialog">
+        <button class="icon-btn" type="submit" aria-label="Fermer l’aide">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+    </div>
+    <div class="help-body">
+      <section>
+        <h3>Deux modes</h3>
+        <p><strong>Expression</strong> : les priorités habituelles s’appliquent, <code>2+3×4 = 14</code>, l’expression reste modifiable.</p>
+        <p><strong>Immédiat</strong> : façon calculatrice de poche, <code>2+3×4 = 20</code>, <code>=</code> répété rejoue la dernière opération.</p>
+      </section>
+      <section>
+        <h3>Conventions</h3>
+        <ul>
+          <li><code>,</code> est la virgule décimale ; <code>;</code> sépare les arguments : <code>log(8;2)</code>.</li>
+          <li><code>%</code> divise par 100 : <code>200+10% = 200,1</code>.</li>
+          <li><code>−2^2 = −4</code>, <code>2^3^2 = 512</code>, <code>3! = 6</code>, <code>50% = 0,5</code>.</li>
+          <li>La multiplication implicite est acceptée : <code>2π</code>, <code>3(4+5)</code>, <code>2sin(30)</code>.</li>
+          <li>Les angles suivent le mode DEG / RAD / GRAD affiché en haut de l’écran.</li>
+          <li><code>EXP</code> insère <code>×10^(</code> : <code>1,23 EXP 5 = 123 000</code>.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>Fonctions disponibles</h3>
+        <div class="help-functions">
+          <p><strong>Trigonométrie</strong><br>sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, asinh, acosh, atanh</p>
+          <p><strong>Puissances et racines</strong><br>sqrt, cbrt, nthroot(x;n), exp, pow(x;y), ^, ², ³</p>
+          <p><strong>Logarithmes</strong><br>ln, log (base 10), log2, logb(x;base)</p>
+          <p><strong>Combinatoire</strong><br>fact, !, nCr, nPr, mod, abs, sign, floor, ceil, round(x;d), trunc</p>
+          <p><strong>Divers</strong><br>min, max, gcd, lcm, rand(), randint(a;b), re, im, conj, arg</p>
+          <p><strong>Conversions</strong><br>deg2rad, rad2deg, dms(d;m;s), c2f, f2c, km2mi, mi2km, kg2lb, lb2kg, m2ft, ft2m, l2gal, gal2l</p>
+        </div>
+      </section>
+      <section>
+        <h3>Clavier physique</h3>
+        <div class="help-keys">
+          <span><kbd>0</kbd>–<kbd>9</kbd> chiffres</span>
+          <span><kbd>+</kbd> <kbd>-</kbd> <kbd>*</kbd> <kbd>/</kbd> <kbd>^</kbd> opérateurs</span>
+          <span><kbd>Entrée</kbd> ou <kbd>=</kbd> calculer</span>
+          <span><kbd>Retour arrière</kbd> effacer un caractère</span>
+          <span><kbd>Échap</kbd> tout effacer</span>
+          <span><kbd>p</kbd> insère π</span>
+        </div>
+      </section>
+      <section>
+        <h3>Modules avancés</h3>
+        <ul>
+          <li><strong>Complexes</strong> : résultat en forme algébrique et polaire.</li>
+          <li><strong>Matrices</strong> : 2×2 ou 3×3, somme, différence, produit, déterminant, inverse, transposée.</li>
+          <li><strong>Stats</strong> : effectif, somme, moyenne, médiane, quartiles, min/max, écarts-types, régression linéaire.</li>
+        </ul>
+      </section>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
